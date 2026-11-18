@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 230 76" role="img" aria-labelledby="title desc">
+  <title id="title">Sistema 14</title>
+  <desc id="desc">Logotipo S14 formado por cintas geométricas naranjas y azul petróleo</desc>
+  <defs>
+    <linearGradient id="orange" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#FF9B29"/><stop offset=".45" stop-color="#F56600"/><stop offset="1" stop-color="#B83900"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#4C8DA4"/><stop offset=".5" stop-color="#15536A"/><stop offset="1" stop-color="#0A2F43"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#F56600" flood-opacity=".18"/></filter>
+  </defs>
+  <g filter="url(#soft)">
+    <path d="M77 14H27c-10 0-16 6-16 15s6 15 16 15h32c5 0 7 3 7 6s-2 7-7 7H9" fill="none" stroke="url(#orange)" stroke-width="13" stroke-linecap="butt" stroke-linejoin="bevel"/>
+    <path d="M14 18 24 8h58L72 18Z" fill="#FFB44F" opacity=".82"/>
+    <path d="m12 51 11-8h39l10 8Z" fill="#CA4700" opacity=".75"/>
+    <path d="m103 28 23-17v52" fill="none" stroke="url(#blue)" stroke-width="13" stroke-linejoin="bevel"/>
+    <path d="m103 28 7 7 16-12V11Z" fill="#71A8B8" opacity=".72"/>
+    <path d="m179 11-34 37h58M190 20v43" fill="none" stroke="url(#blue)" stroke-width="13" stroke-linejoin="bevel"/>
+    <path d="m179 11 10 9-25 28h-19Z" fill="#3C8199" opacity=".7"/>
+    <path d="m190 20 8-8v51h-8Z" fill="#092F43" opacity=".78"/>
+  </g>
+  <path d="M211 16h10M216 11v10" stroke="#F56600" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+</svg>
+

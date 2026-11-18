@@ -1,0 +1,25 @@
+Options -Indexes
+DirectoryIndex index.php
+
+# Anula el handler ea-php56 heredado del proyecto antiguo. En Laragon PHP se
+# ejecuta mediante mod_fcgid; sin esta regla Apache entrega el código fuente.
+<IfModule mod_mime.c>
+    RemoveHandler .php .php5 .phtml
+</IfModule>
+<IfModule mod_fcgid.c>
+    AddHandler fcgid-script .php
+</IfModule>
+
+RewriteEngine On
+
+# Permite servir la aplicación desde /recode sin exponer src, views o .env.
+RewriteRule ^assets/(.*)$ public/assets/$1 [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+

@@ -1,0 +1,7 @@
+<?php use Banca\Core\Csrf; use Banca\Core\Http; use Banca\Core\View; ?>
+<section class="split">
+<div class="panel"><h2>Cambiar contraseña</h2><p>Usa al menos 12 caracteres con mayúscula, minúscula y número.</p><form method="post" action="<?= Http::url('/security/password') ?>" class="stack" data-lock-submit><?= Csrf::field() ?><label>Contraseña actual<input type="password" name="current_password" required autocomplete="current-password"></label><label>Nueva contraseña<input type="password" name="new_password" minlength="12" required autocomplete="new-password"></label><button class="primary">Actualizar contraseña</button></form></div>
+<div class="panel"><h2>Autenticación 2FA</h2><p>Estado: <span class="badge <?= $hasTotp ? 'in' : 'out' ?>"><?= $hasTotp ? 'Activa' : 'Pendiente' ?></span></p>
+<?php if (!$pendingSecret): ?><form method="post" action="<?= Http::url('/security/totp/start') ?>"><?= Csrf::field() ?><button class="secondary">Generar nueva clave 2FA</button></form><?php else: ?><div class="secret-box"><p>Agrega esta clave en tu aplicación TOTP:</p><code><?= View::e($pendingSecret) ?></code><small><?= View::e($pendingUri) ?></small></div><form method="post" action="<?= Http::url('/security/totp/enable') ?>" class="stack"><?= Csrf::field() ?><label>Código de confirmación<input name="totp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required></label><button class="primary">Confirmar y activar</button></form><?php endif; ?>
+</div></section>
+
