@@ -5,6 +5,7 @@ use Banca\Core\Database;
 use Banca\Repository\BankingRepository;
 use Banca\Service\TransferService;
 use Banca\Service\WithdrawalConcept;
+use Banca\Core\Validation;
 
 require dirname(__DIR__) . '/src/bootstrap.php';
 
@@ -18,6 +19,7 @@ $assert(WithdrawalConcept::normalize('874503') === '874503', 'Una referencia num
 $assert(WithdrawalConcept::normalize(' 00124 ') === '00124', 'La referencia numérica no fue normalizada correctamente.');
 $assert(WithdrawalConcept::normalize('Pago 874503') === 'Deposito', 'Un concepto alfanumérico no se reemplazó por Deposito.');
 $assert(WithdrawalConcept::normalize('') === 'Deposito', 'El concepto vacío no se reemplazó por Deposito.');
+$assert(Validation::money('1,234,567.89') === 1234567.89, 'El servidor no acepta correctamente un monto visual separado por comas.');
 
 $pdo = Database::connection();
 $repository = new BankingRepository($pdo);

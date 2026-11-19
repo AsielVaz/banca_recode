@@ -4,6 +4,36 @@ document.querySelectorAll('[data-confirm]').forEach((form) => {
   });
 });
 
+const normalizeMoney = (value) => {
+  const cleaned = String(value).replace(/[^0-9.]/g, '');
+  const dot = cleaned.indexOf('.');
+  if (dot === -1) return cleaned;
+  return `${cleaned.slice(0, dot)}.${cleaned.slice(dot + 1).replace(/\./g, '').slice(0, 2)}`;
+};
+
+const formatMoney = (value) => {
+  const normalized = normalizeMoney(value);
+  if (normalized === '') return '';
+  const hasDot = normalized.includes('.');
+  const [rawInteger, decimals = ''] = normalized.split('.');
+  const integer = (rawInteger || '0').replace(/^0+(?=\d)/, '');
+  const grouped = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return hasDot ? `${grouped}.${decimals}` : grouped;
+};
+
+document.querySelectorAll('[data-money-input]').forEach((input) => {
+  input.addEventListener('input', () => {
+    input.value = formatMoney(input.value);
+    input.setSelectionRange(input.value.length, input.value.length);
+  });
+  input.addEventListener('blur', () => {
+    input.value = formatMoney(input.value);
+  });
+  input.form?.addEventListener('submit', () => {
+    input.value = normalizeMoney(input.value);
+  }, {capture: true});
+});
+
 document.querySelectorAll('[data-lock-submit]').forEach((form) => {
   form.addEventListener('submit', () => {
     const button = form.querySelector('button[type="submit"], button:not([type])');

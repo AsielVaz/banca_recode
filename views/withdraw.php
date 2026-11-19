@@ -8,7 +8,7 @@
 <label class="full">Beneficiario<input name="name" maxlength="40" required></label>
 <label class="full">Tarjeta (16) o CLABE (18)<input name="account" inputmode="numeric" minlength="16" maxlength="18" autocomplete="off" required><span class="optional">El banco se determina automáticamente y no puede seleccionarse manualmente.</span></label>
 <label>Banco<input type="text" data-bank-display placeholder="Esperando tarjeta o CLABE" readonly required aria-describedby="bank-status"><span class="field-status" id="bank-status" data-bank-status aria-live="polite">Ingresa los 16 o 18 dígitos para identificar el banco.</span></label>
-<label>Monto MXN<input name="amount" inputmode="decimal" placeholder="0.00" required></label>
+<label>Monto MXN<input name="amount" inputmode="decimal" placeholder="0.00" autocomplete="off" data-money-input required></label>
 <label class="full">Concepto<input name="concept" maxlength="50" value="Deposito" required><span class="optional">Sólo se conserva si escribes una referencia completamente numérica; cualquier texto se registra como Deposito.</span></label>
 <label>Correo de aviso<input type="email" name="email"></label><label>Teléfono de aviso<input name="phone" maxlength="20"></label>
 <label class="full">Código 2FA<input name="totp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required></label>

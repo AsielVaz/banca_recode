@@ -147,6 +147,7 @@ label { display: grid; gap: 7px; color: var(--text-secondary); font-size: 12.5px
 input, select, textarea { width: 100%; min-height: 44px; padding: 10px 13px; color: var(--ink); background: #fff; border: 1px solid var(--control-border); border-radius: 11px; transition: border-color 160ms ease, box-shadow 160ms ease; }
 textarea { min-height: 88px; resize: vertical; }
 input::placeholder, textarea::placeholder { color: #9b9298; }
+input[data-money-input] { font-variant-numeric: tabular-nums; }
 input[readonly] { color: var(--text-secondary); background: var(--surface-warm); cursor: default; }
 input:hover, select:hover, textarea:hover { border-color: #c8bbb3; }
 input:focus, select:focus, textarea:focus { border-color: #f28a40; outline: none; box-shadow: 0 0 0 3px rgba(245,102,0,.13); }
