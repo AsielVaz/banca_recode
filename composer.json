@@ -4,7 +4,7 @@
   "type": "project",
   "license": "proprietary",
   "require": {
-    "php": "^8.5",
+    "php": "^8.3",
     "ext-pdo": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
@@ -13,6 +13,9 @@
   },
   "autoload": {
     "psr-4": {"Banca\\": "src/"}
+  },
+  "config": {
+    "platform": {"php": "8.3.0"}
   },
   "scripts": {
     "test": [

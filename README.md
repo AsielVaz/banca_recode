@@ -1,10 +1,10 @@
 # Banca 14 · recode
 
-Reimplementación del portal `banca_page` para PHP 8.5. Usa el esquema existente de `iohanes_14`, pero elimina el acoplamiento con PHP 5, consultas concatenadas, credenciales embebidas y dependencias copiadas dentro del repositorio.
+Reimplementación moderna del portal `banca_page`, compatible con PHP 8.3 a 8.5. Usa el esquema existente de `iohanes_14`, pero elimina el acoplamiento con PHP 5, consultas concatenadas, credenciales embebidas y dependencias copiadas dentro del repositorio.
 
 ## Requisitos
 
-- PHP 8.5 con `pdo_mysql`, `mbstring`, `json`, `curl` y `openssl`.
+- PHP 8.3 o posterior con `pdo_mysql`, `mbstring`, `json`, `curl` y `openssl`.
 - MySQL/MariaDB con el esquema actual de Sistema 14.
 - Apache con `mod_rewrite`, Nginx equivalente, o el servidor integrado de PHP para desarrollo.
 
