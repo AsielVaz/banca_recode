@@ -162,7 +162,7 @@ if ($route === '/transfer' && $method === 'POST') {
 if ($route === '/withdraw' && $method === 'GET') {
     View::render('withdraw', [
         'title' => 'Nuevo retiro SPEI', 'balance' => $balance, 'contacts' => $repository->contacts(Auth::id()),
-        'banks' => $repository->banks(), 'speiMode' => Env::get('SPEI_MODE', 'disabled'),
+        'speiMode' => Env::get('SPEI_MODE', 'disabled'),
         'operationToken' => OperationToken::issue('withdraw'),
     ]);
     exit;

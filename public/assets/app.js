@@ -31,36 +31,33 @@ if (contactPicker) {
 
 const accountInput = document.querySelector('input[name="account"]');
 if (accountInput) {
-  const bankSelect = accountInput.form.elements.bank;
+  const bankDisplay = accountInput.form.querySelector('[data-bank-display]');
   const bankStatus = accountInput.form.querySelector('[data-bank-status]');
   let bankRequest;
-  const selectBank = (code) => {
-    const option = [...bankSelect.options].find((item) => item.value.padStart(3, '0') === code);
-    if (!option) return false;
-    bankSelect.value = option.value;
-    return true;
-  };
   accountInput.addEventListener('input', async () => {
     bankRequest?.abort();
     accountInput.value = accountInput.value.replace(/\D/g, '').slice(0, 18);
-    bankSelect.value = '';
-    bankStatus.textContent = '';
-    if (accountInput.value.length === 18) {
-      const prefix = accountInput.value.slice(0, 3);
-      if (selectBank(prefix)) bankStatus.textContent = 'Banco identificado por la CLABE.';
-      else bankStatus.textContent = 'El banco de la CLABE no está en el catálogo.';
-      return;
-    }
-    if (accountInput.value.length !== 16) {
-      if (accountInput.value.length > 0) bankStatus.textContent = 'Ingresa 16 dígitos de tarjeta o 18 de CLABE.';
+    accountInput.setCustomValidity('');
+    bankDisplay.value = '';
+    bankDisplay.setCustomValidity('');
+    const account = accountInput.value;
+    if (![16, 18].includes(account.length)) {
+      bankDisplay.placeholder = 'Esperando tarjeta o CLABE';
+      bankStatus.textContent = account.length > 0
+        ? 'Ingresa 16 dígitos de tarjeta o 18 de CLABE.'
+        : 'Ingresa los 16 o 18 dígitos para identificar el banco.';
       return;
     }
 
-    bankStatus.textContent = 'Consultando banco en Sistema 14…';
+    bankDisplay.placeholder = 'Identificando banco…';
+    accountInput.setCustomValidity('Espera a que se identifique el banco.');
+    bankStatus.textContent = account.length === 18
+      ? 'Consultando los primeros 3 dígitos de la CLABE en el catálogo…'
+      : 'Consultando el banco de la tarjeta en Sistema 14…';
     bankRequest = new AbortController();
     const payload = new FormData();
     payload.append('_csrf', accountInput.form.elements._csrf.value);
-    payload.append('account', accountInput.value);
+    payload.append('account', account);
     try {
       const response = await fetch(accountInput.form.dataset.bankResolveUrl, {
         method: 'POST',
@@ -70,10 +67,17 @@ if (accountInput) {
       });
       const result = await response.json();
       if (!response.ok || !result.ok) throw new Error(result.message || 'Banco no reconocido.');
-      if (!selectBank(result.bank.code)) throw new Error('El banco identificado no está disponible.');
-      bankStatus.textContent = `${result.bank.name} · identificado automáticamente`;
+      if (accountInput.value !== account) return;
+      bankDisplay.value = result.bank.name;
+      bankDisplay.dataset.bankCode = result.bank.code;
+      accountInput.setCustomValidity('');
+      bankStatus.textContent = `${result.bank.name} · identificado automáticamente (${result.bank.source})`;
     } catch (error) {
       if (error.name === 'AbortError') return;
+      if (accountInput.value !== account) return;
+      bankDisplay.value = '';
+      bankDisplay.placeholder = 'Banco no identificado';
+      accountInput.setCustomValidity(error.message || 'No se pudo identificar el banco.');
       bankStatus.textContent = error.message || 'No se pudo consultar el banco.';
     }
   });
