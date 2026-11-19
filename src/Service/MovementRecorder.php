@@ -32,6 +32,7 @@ final class MovementRecorder
         if (!OperationToken::isValidReference($reference)) {
             throw new RuntimeException('La referencia idempotente no es válida.');
         }
+        $data['concept'] = WithdrawalConcept::normalize($data['concept'] ?? '');
 
         $existing = $pdo->prepare('SELECT id FROM pre_ejecuta_plantilla WHERE cliente = :client AND folio = :reference LIMIT 1 FOR UPDATE');
         $existing->execute(['client' => $clientId, 'reference' => $reference]);

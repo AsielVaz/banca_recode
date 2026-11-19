@@ -18,6 +18,7 @@
       "php tests/smoke.php",
       "php tests/idempotency.php",
       "php tests/concurrency.php",
+      "php tests/business_rules.php",
       "php tests/movement_recording.php"
     ],
     "lint": "php tests/lint.php"

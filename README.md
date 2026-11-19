@@ -43,6 +43,8 @@ La variante `api` requiere adaptar el contrato de `src/Service/SpeiGateway.php` 
 - TOTP es compatible con las claves Base32 guardadas en `usuarios.2fa`.
 - Todos los POST requieren CSRF y todas las consultas variables son preparadas.
 - Los traspasos bloquean las filas relevantes y crean cargo/abono dentro de una transacción.
+- Los traspasos sólo pueden iniciarlos carteras activas con `lidera=1`; los destinos se restringen a carteras activas del mismo grupo y se vuelve a validar dentro de la transacción.
+- En retiros, sólo se conserva un concepto compuesto completamente por números (máximo 50 dígitos); cualquier otro valor se registra como `Deposito`.
 - El retiro por plantilla usa el archivo XLS original, carga automáticamente su vista previa y admite hasta 50 filas. Las tarjetas de 16 dígitos se identifican enviando únicamente su BIN de seis dígitos a `old.sistema14.com`; las CLABE se resuelven con el catálogo local.
 - Con un proveedor externo, las operaciones confirmadas antes de un fallo no pueden revertirse; el proveedor debe soportar idempotencia y conciliación.
 

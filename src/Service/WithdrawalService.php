@@ -21,6 +21,7 @@ final class WithdrawalService
     /** @param array{name:string,account:string,amount:float,concept:string,email:string,phone:string,bank:string,totp:string,reference:string} $data */
     public function execute(int $userId, int $clientId, array $data): int
     {
+        $data['concept'] = WithdrawalConcept::normalize($data['concept'] ?? '');
         $user = $this->repository->userById($userId);
         $secret = $user !== false ? trim((string) ($user['2fa'] ?? '')) : '';
         if ($secret === '') {

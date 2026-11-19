@@ -130,9 +130,16 @@ final class BankingRepository
     /** @return list<array<string, mixed>> */
     public function destinationClients(int $currentClient): array
     {
-        $statement = $this->pdo->prepare('SELECT id, nombre FROM clientes WHERE activo = 1 AND id <> :current ORDER BY nombre');
+        $statement = $this->pdo->prepare('SELECT destination.id, destination.nombre FROM clientes AS origin INNER JOIN clientes AS destination ON destination.grupo = origin.grupo WHERE origin.id = :current AND origin.activo = 1 AND origin.lidera = 1 AND origin.grupo IS NOT NULL AND origin.grupo <> 0 AND destination.activo = 1 AND destination.id <> origin.id ORDER BY destination.nombre');
         $statement->execute(['current' => $currentClient]);
         return $statement->fetchAll();
+    }
+
+    public function canInitiateTransfers(int $clientId): bool
+    {
+        $statement = $this->pdo->prepare('SELECT 1 FROM clientes WHERE id = :client AND activo = 1 AND lidera = 1 AND grupo IS NOT NULL AND grupo <> 0 LIMIT 1');
+        $statement->execute(['client' => $clientId]);
+        return $statement->fetchColumn() !== false;
     }
 
     /** @return array<string, mixed>|false */

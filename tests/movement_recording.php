@@ -57,13 +57,14 @@ try {
     );
     $assert($repeatedId === $withdrawalId, 'Un reintento creó un retiro diferente.');
 
-    $statement = $pdo->prepare('SELECT w.id, w.id_pago, w.id_captura_edo, w.status, w.status_banxico, w.estado, w.status_pre, w.espera_liquidacion, p.id_captura_edo_cta, p.monto, p.saldo_acreditable, p.descripcion, p.descripcion_detallada, c.referencia, c.descripcion AS captura_descripcion FROM pre_ejecuta_plantilla w JOIN pagos p ON p.id = w.id_pago JOIN captura_edo_cta c ON c.id = w.id_captura_edo WHERE w.id = :id');
+    $statement = $pdo->prepare('SELECT w.id, w.id_pago, w.id_captura_edo, w.status, w.status_banxico, w.estado, w.status_pre, w.espera_liquidacion, w.concepto, p.id_captura_edo_cta, p.monto, p.saldo_acreditable, p.descripcion, p.descripcion_detallada, c.referencia, c.descripcion AS captura_descripcion FROM pre_ejecuta_plantilla w JOIN pagos p ON p.id = w.id_pago JOIN captura_edo_cta c ON c.id = w.id_captura_edo WHERE w.id = :id');
     $statement->execute(['id' => $withdrawalId]);
     $linked = $statement->fetch();
     $assert($linked !== false, 'No se crearon los tres registros relacionados.');
     $assert((int) $linked['id_captura_edo'] === (int) $linked['id_captura_edo_cta'], 'El pago apunta a una captura distinta.');
     $assert((string) $linked['referencia'] === $reference, 'La captura no conserva la referencia idempotente.');
     $assert((string) $linked['status'] === '0' && $linked['status_banxico'] === null && $linked['estado'] === null && $linked['status_pre'] === null && (int) $linked['espera_liquidacion'] === 0, 'El retiro no quedó en el estado inicial que consume la cola SPEI histórica.');
+    $assert((string) $linked['concepto'] === 'Deposito', 'Un concepto textual no fue normalizado antes de registrarse.');
     $assert((float) $linked['monto'] === 0.01 && (float) $linked['saldo_acreditable'] === -0.01, 'El cargo contable no conserva los signos esperados.');
     $descriptions = (string) $linked['descripcion'] . (string) $linked['descripcion_detallada'] . (string) $linked['captura_descripcion'];
     $assert(!str_contains($descriptions, $account), 'Un número de tarjeta completo quedó guardado en las descripciones.');

@@ -9,7 +9,7 @@
 <label class="full">Tarjeta (16) o CLABE (18)<input name="account" inputmode="numeric" minlength="16" maxlength="18" required></label>
 <label>Banco<select name="bank" required><option value="">Se determinará automáticamente</option><?php foreach ($banks as $bank): ?><option value="<?= View::e($bank['cve_id']) ?>"><?= View::e($bank['nombre_corto']) ?></option><?php endforeach; ?></select><span class="field-status" data-bank-status aria-live="polite"></span></label>
 <label>Monto MXN<input name="amount" inputmode="decimal" placeholder="0.00" required></label>
-<label class="full">Concepto<input name="concept" maxlength="200" required></label>
+<label class="full">Concepto<input name="concept" maxlength="50" value="Deposito" required><span class="optional">Sólo se conserva si escribes una referencia completamente numérica; cualquier texto se registra como Deposito.</span></label>
 <label>Correo de aviso<input type="email" name="email"></label><label>Teléfono de aviso<input name="phone" maxlength="20"></label>
 <label class="full">Código 2FA<input name="totp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required></label>
 <div class="summary-line full"><span>Saldo máximo disponible</span><strong>$<?= number_format((float) $balance, 2) ?></strong></div>

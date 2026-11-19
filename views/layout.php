@@ -34,6 +34,9 @@ $navItem = static function (string $route, string $label, string $iconName) use 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#1d1b1b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title><?= View::e($title ?? 'Banca 14') ?> · Banca 14</title>
     <link rel="icon" href="assets/banca14-logo.png" type="image/png">
     <link rel="stylesheet" href="assets/app.css?v=<?= (int) filemtime(dirname(__DIR__) . '/public/assets/app.css') ?>">
@@ -85,6 +88,13 @@ $navItem = static function (string $route, string $label, string $iconName) use 
 </main>
 <footer>Operación protegida <span>·</span> Sistema 14 <span>·</span> America/Mexico_City</footer>
 </div>
+<nav class="mobile-tabbar" aria-label="Accesos rápidos">
+    <?= $navItem('/', 'Inicio', 'home') ?>
+    <?= $navItem('/withdraw', 'Retirar', 'send') ?>
+    <?= $navItem('/transfer', 'Traspasar', 'transfer') ?>
+    <?= $navItem('/movements', 'Movimientos', 'movements') ?>
+    <button class="nav-item mobile-more" type="button" data-menu-toggle aria-label="Abrir todas las opciones" aria-controls="sidebar" aria-expanded="false"><?= $icon('menu') ?><span>Más</span></button>
+</nav>
 <script src="assets/app.js?v=<?= (int) filemtime(dirname(__DIR__) . '/public/assets/app.js') ?>" defer></script>
 </body>
 </html>

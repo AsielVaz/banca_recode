@@ -7,7 +7,7 @@ $flash = Flash::pull();
 ?>
 <!doctype html>
 <html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acceso · Banca 14</title><link rel="icon" href="assets/banca14-logo.png" type="image/png"><link rel="stylesheet" href="assets/app.css?v=<?= (int) filemtime(dirname(__DIR__) . '/public/assets/app.css') ?>"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080808"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>Acceso · Banca 14</title><link rel="icon" href="assets/banca14-logo.png" type="image/png"><link rel="stylesheet" href="assets/app.css?v=<?= (int) filemtime(dirname(__DIR__) . '/public/assets/app.css') ?>"></head>
 <body class="login-page">
 <a class="skip-link" href="#login-form">Saltar al formulario</a>
 <main class="login-shell">

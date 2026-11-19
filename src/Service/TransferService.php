@@ -16,11 +16,25 @@ final class TransferService
             throw new InvalidArgumentException('La cartera de destino debe ser diferente a la de origen.');
         }
         Database::transaction(function (PDO $pdo) use ($originClient, $destinationClient, $userId, $amount, $detail): void {
-            $clients = $pdo->prepare('SELECT id, activo FROM clientes WHERE id IN (:origin, :destination) FOR UPDATE');
+            // Se bloquean en orden estable y se vuelve a validar aquí para que
+            // ni un POST manipulado ni un cambio concurrente evadan la regla.
+            $clients = $pdo->prepare('SELECT id, activo, grupo, lidera FROM clientes WHERE id IN (:origin, :destination) ORDER BY id FOR UPDATE');
             $clients->execute(['origin' => $originClient, 'destination' => $destinationClient]);
-            $found = $clients->fetchAll();
-            if (count($found) !== 2 || array_filter($found, static fn (array $row): bool => (int) $row['activo'] !== 1)) {
+            $found = [];
+            foreach ($clients->fetchAll() as $client) {
+                $found[(int) $client['id']] = $client;
+            }
+            $origin = $found[$originClient] ?? null;
+            $destination = $found[$destinationClient] ?? null;
+            if ($origin === null || $destination === null || (int) $origin['activo'] !== 1 || (int) $destination['activo'] !== 1) {
                 throw new RuntimeException('Una de las carteras no existe o está inactiva.');
+            }
+            $originGroup = (int) ($origin['grupo'] ?? 0);
+            if ((int) $origin['lidera'] !== 1 || $originGroup === 0) {
+                throw new RuntimeException('Sólo una cartera líder de un grupo puede realizar traspasos.');
+            }
+            if ((int) ($destination['grupo'] ?? 0) !== $originGroup) {
+                throw new RuntimeException('El traspaso sólo puede realizarse entre carteras del mismo grupo.');
             }
 
             $lock = $pdo->prepare('SELECT id FROM pagos WHERE nombre = :client ORDER BY id DESC LIMIT 1 FOR UPDATE');

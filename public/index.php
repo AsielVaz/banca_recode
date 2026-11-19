@@ -17,6 +17,7 @@ use Banca\Service\OperationToken;
 use Banca\Service\TotpService;
 use Banca\Service\TransferService;
 use Banca\Service\WithdrawalService;
+use Banca\Service\WithdrawalConcept;
 
 require dirname(__DIR__) . '/src/bootstrap.php';
 
@@ -83,6 +84,7 @@ if ($route === '/' && $method === 'GET') {
         'balance' => $balance,
         'movements' => $repository->movements(Auth::clientId(), 5),
         'withdrawals' => $repository->withdrawals(Auth::clientId(), 5),
+        'canTransfer' => $repository->canInitiateTransfers(Auth::clientId()),
         'securityNotice' => $_SESSION['security_notice'] ?? null,
     ]);
     unset($_SESSION['security_notice']);
@@ -124,7 +126,12 @@ if ($route === '/contacts/delete' && $method === 'POST') {
 }
 
 if ($route === '/transfer' && $method === 'GET') {
-    View::render('transfer', ['title' => 'Traspaso entre carteras', 'balance' => $balance, 'clients' => $repository->destinationClients(Auth::clientId())]);
+    View::render('transfer', [
+        'title' => 'Traspaso entre carteras',
+        'balance' => $balance,
+        'clients' => $repository->destinationClients(Auth::clientId()),
+        'canTransfer' => $repository->canInitiateTransfers(Auth::clientId()),
+    ]);
     exit;
 }
 
@@ -169,7 +176,7 @@ if ($route === '/withdraw' && $method === 'POST') {
             'name' => Validation::text($_POST['name'] ?? '', 'Beneficiario', 40),
             'account' => $account,
             'amount' => Validation::money($_POST['amount'] ?? ''),
-            'concept' => Validation::text($_POST['concept'] ?? '', 'Concepto', 200),
+            'concept' => WithdrawalConcept::normalize($_POST['concept'] ?? ''),
             'email' => Validation::email($_POST['email'] ?? ''),
             'phone' => Validation::text($_POST['phone'] ?? '', 'Teléfono', 20, false),
             'bank' => $bank['code'],

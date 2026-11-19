@@ -84,23 +84,39 @@ document.querySelector('#print-page')?.addEventListener('click', () => window.pr
 const sidebar = document.querySelector('#sidebar');
 const menuToggle = document.querySelector('.menu-toggle');
 const menuClose = document.querySelector('.menu-close');
+const menuToggles = document.querySelectorAll('.menu-toggle, [data-menu-toggle]');
+let menuTrigger = menuToggle;
 
-function setMenu(open) {
-  if (!sidebar || !menuToggle) return;
+function setMenu(open, trigger = menuTrigger) {
+  if (!sidebar || !menuToggles.length) return;
+  if (open) menuTrigger = trigger;
   sidebar.classList.toggle('open', open);
   document.body.classList.toggle('menu-open', open);
-  menuToggle.setAttribute('aria-expanded', String(open));
-  menuToggle.setAttribute('aria-label', open ? 'Cerrar navegación' : 'Abrir navegación');
+  menuToggles.forEach((toggle) => toggle.setAttribute('aria-expanded', String(open)));
+  menuToggle?.setAttribute('aria-label', open ? 'Cerrar navegación' : 'Abrir navegación');
   if (open) menuClose?.focus();
-  else menuToggle.focus();
+  else menuTrigger?.focus();
 }
 
-menuToggle?.addEventListener('click', () => setMenu(!sidebar?.classList.contains('open')));
+menuToggles.forEach((toggle) => toggle.addEventListener('click', () => setMenu(!sidebar?.classList.contains('open'), toggle)));
 menuClose?.addEventListener('click', () => setMenu(false));
 document.querySelector('[data-menu-close]')?.addEventListener('click', () => setMenu(false));
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && sidebar?.classList.contains('open')) setMenu(false);
 });
+
+// En móvil las tablas se leen como tarjetas, conservando la tabla original
+// para escritorio y lectores de pantalla.
+document.querySelectorAll('.table-wrap:not(.batch-table-wrap) table').forEach((table) => {
+  const labels = [...table.querySelectorAll('thead th')].map((header) => header.textContent.trim());
+  table.querySelectorAll('tbody tr').forEach((row) => {
+    [...row.cells].forEach((cell, index) => {
+      if (!cell.classList.contains('empty')) cell.dataset.label = labels[index] || '';
+    });
+  });
+});
+
+requestAnimationFrame(() => document.body.classList.add('app-ready'));
 
 const batchForm = document.querySelector('[data-batch-form]');
 if (batchForm) {

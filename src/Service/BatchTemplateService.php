@@ -67,7 +67,7 @@ final class BatchTemplateService
                 'account' => preg_replace('/\D+/', '', (string) $values[1]) ?? '',
                 'amount' => 0.0,
                 'phone' => preg_replace('/[^0-9+]/', '', (string) $values[3]) ?? '',
-                'concept' => 'Depósito',
+                'concept' => 'Deposito',
                 'email' => '',
                 'bank' => '',
                 'bank_name' => '',
