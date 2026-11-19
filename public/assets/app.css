@@ -207,6 +207,9 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .instructions li { margin: 8px 0; padding-left: 5px; }
 .secret-box { margin: 18px 0; padding: 16px; background: var(--surface-warm); border: 1px solid var(--border); border-radius: 12px; overflow-wrap: anywhere; }
 .secret-box code { display: block; margin: 8px 0; color: var(--orange-deep); font-size: 16px; }
+.receipt-actions { display: flex; align-items: center; gap: 7px; }
+.receipt-actions .button { min-height: 36px; padding: 7px 10px; font-size: 12px; white-space: nowrap; }
+.receipt-pending { color: var(--text-muted); font-size: 12px; white-space: nowrap; }
 
 /* Autenticación */
 .login-page { display: grid; min-height: 100vh; overflow-x: hidden; background: #080808; }
@@ -422,6 +425,8 @@ button:disabled { cursor: not-allowed; opacity: .55; }
   .passkey-card { grid-template-columns: 42px minmax(0,1fr); }
   .passkey-actions { grid-column: 1 / -1; flex-direction: column; }
   .passkey-actions .secondary { width: 100%; }
+  .receipt-actions { align-items: stretch; flex-direction: column; }
+  .receipt-actions .button { width: 100%; }
 
   body.app-body:not(.app-ready) .shell > * { opacity: 0; transform: translateY(10px) scale(.995); }
   body.app-body.app-ready .shell > * { animation: mobile-screen-in 430ms cubic-bezier(.22,1,.36,1) both; }

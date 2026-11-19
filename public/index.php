@@ -15,6 +15,7 @@ use Banca\Service\AuthService;
 use Banca\Service\BankResolver;
 use Banca\Service\BatchTemplateService;
 use Banca\Service\OperationToken;
+use Banca\Service\LegacyCepPdf;
 use Banca\Service\TotpService;
 use Banca\Service\TransferService;
 use Banca\Service\WithdrawalService;
@@ -109,7 +110,12 @@ if ($route === '/movements' && $method === 'GET') {
 }
 
 if ($route === '/receipts' && $method === 'GET') {
-    View::render('receipts', ['title' => 'Retiros y comprobantes', 'balance' => $balance, 'withdrawals' => $repository->withdrawals(Auth::clientId(), 300)]);
+    $pdf = new LegacyCepPdf();
+    $withdrawals = array_map(static function (array $withdrawal) use ($pdf): array {
+        $withdrawal['pdf_url'] = $pdf->url((int) $withdrawal['id']);
+        return $withdrawal;
+    }, $repository->withdrawals(Auth::clientId(), 300));
+    View::render('receipts', ['title' => 'Retiros y comprobantes', 'balance' => $balance, 'withdrawals' => $withdrawals]);
     exit;
 }
 

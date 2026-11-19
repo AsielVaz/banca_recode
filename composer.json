@@ -24,6 +24,7 @@
       "php tests/concurrency.php",
       "php tests/business_rules.php",
       "php tests/bank_resolution.php",
+      "php tests/legacy_cep_pdf.php",
       "php tests/presentation.php",
       "php tests/webauthn.php",
       "php tests/movement_recording.php"
