@@ -8,7 +8,8 @@
     "ext-pdo": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "shuchkin/simplexls": "^1.0"
+    "shuchkin/simplexls": "^1.0",
+    "lbuchs/webauthn": "^2.2"
   },
   "autoload": {
     "psr-4": {"Banca\\": "src/"}
@@ -20,6 +21,7 @@
       "php tests/concurrency.php",
       "php tests/business_rules.php",
       "php tests/presentation.php",
+      "php tests/webauthn.php",
       "php tests/movement_recording.php"
     ],
     "lint": "php tests/lint.php"

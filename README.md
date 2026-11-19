@@ -45,11 +45,24 @@ La variante `api` requiere adaptar el contrato de `src/Service/SpeiGateway.php` 
 - Los traspasos bloquean las filas relevantes y crean cargo/abono dentro de una transacción.
 - Los traspasos sólo pueden iniciarlos carteras activas con `lidera=1`; los destinos se restringen a carteras activas del mismo grupo y se vuelve a validar dentro de la transacción.
 - En retiros, sólo se conserva un concepto compuesto completamente por números (máximo 50 dígitos); cualquier otro valor se registra como `Deposito`.
+- WebAuthn/Passkeys funciona como acceso adicional a contraseña y TOTP. Dev2 usa RP ID `sistema14.com`, origen exacto `https://dev2.sistema14.com`, cookie `S14DEV2SESSION` y reutiliza `usuarios_passkeys` sin copiar claves privadas.
+- La administración de Passkeys está disponible en Seguridad: registro, listado, cambio de nombre y eliminación con CSRF, propiedad y autenticación reciente.
 - El retiro por plantilla usa el archivo XLS original, carga automáticamente su vista previa y admite hasta 50 filas. Las tarjetas de 16 dígitos se identifican enviando únicamente su BIN de seis dígitos a `old.sistema14.com`; las CLABE se resuelven con el catálogo local.
 - Con un proveedor externo, las operaciones confirmadas antes de un fallo no pueden revertirse; el proveedor debe soportar idempotencia y conciliación.
 
 Consulta [docs/ANALISIS_LEGACY.md](docs/ANALISIS_LEGACY.md) para el mapa funcional y las decisiones de migración.
 El diseño transaccional de las tres tablas de retiros se documenta en [docs/REGISTRO_MOVIMIENTOS.md](docs/REGISTRO_MOVIMIENTOS.md).
+
+## Endpoints WebAuthn
+
+Todos son `POST`, devuelven JSON sin caché y se atienden mediante `?webauthn=`:
+
+- `login-options` y `login-verify`: públicos, con límite por IP e identidad.
+- `register-options` y `register-verify`: requieren sesión y CSRF.
+- `rename`: requiere sesión, CSRF y propiedad de la credencial.
+- `delete`: además exige autenticación reciente y conservar un método alternativo de acceso.
+
+`WEBAUTHN_HANDLE_SECRET` debe permanecer únicamente en `.env` y coincidir con Dev1. El archivo está excluido de Git.
 
 Los índices recomendados están en `database/recommended_indexes.sql`. Deben aplicarse en una ventana de mantenimiento después de medirlos con `EXPLAIN`; la instalación no modifica automáticamente tablas de producción.
 

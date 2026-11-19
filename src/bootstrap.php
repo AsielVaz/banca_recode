@@ -5,9 +5,9 @@ use Banca\Core\Env;
 
 define('BANCA_ROOT', dirname(__DIR__));
 
-$simpleXls = BANCA_ROOT . '/vendor/shuchkin/simplexls/src/SimpleXLS.php';
-if (is_file($simpleXls)) {
-    require_once $simpleXls;
+$composerAutoload = BANCA_ROOT . '/vendor/autoload.php';
+if (is_file($composerAutoload)) {
+    require_once $composerAutoload;
 }
 
 spl_autoload_register(static function (string $class): void {
@@ -35,13 +35,22 @@ if (Env::bool('APP_DEBUG')) {
 ini_set('session.use_strict_mode', '1');
 ini_set('session.use_only_cookies', '1');
 session_name((string) Env::get('SESSION_NAME', 'banca14_recode'));
-session_set_cookie_params([
+$sameSite = (string) Env::get('SESSION_COOKIE_SAMESITE', 'Lax');
+if (!in_array($sameSite, ['Lax', 'Strict', 'None'], true)) {
+    $sameSite = 'Lax';
+}
+$cookie = [
     'lifetime' => 0,
     'path' => '/',
-    'secure' => Env::bool('SESSION_SECURE'),
-    'httponly' => true,
-    'samesite' => 'Lax',
-]);
+    'secure' => Env::bool('SESSION_SECURE_COOKIE', Env::bool('SESSION_SECURE')),
+    'httponly' => Env::bool('SESSION_COOKIE_HTTPONLY', true),
+    'samesite' => $sameSite,
+];
+$cookieDomain = trim((string) Env::get('SESSION_COOKIE_DOMAIN', ''));
+if ($cookieDomain !== '') {
+    $cookie['domain'] = $cookieDomain;
+}
+session_set_cookie_params($cookie);
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }

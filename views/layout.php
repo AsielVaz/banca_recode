@@ -96,6 +96,7 @@ $navItem = static function (string $route, string $label, string $iconName) use 
     <button class="nav-item mobile-more" type="button" data-menu-toggle aria-label="Abrir todas las opciones" aria-controls="sidebar" aria-expanded="false"><?= $icon('menu') ?><span>Más</span></button>
 </nav>
 <script src="assets/app.js?v=<?= (int) filemtime(dirname(__DIR__) . '/public/assets/app.js') ?>" defer></script>
+<?php if (($webauthnEnabled ?? false) === true): ?><script src="assets/passkeys.js?v=<?= (int) filemtime(dirname(__DIR__) . '/public/assets/passkeys.js') ?>" defer></script><?php endif; ?>
 </body>
 </html>
 

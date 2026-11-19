@@ -17,14 +17,15 @@ $flash = Flash::pull();
         <?php if ($flash): ?><div class="alert <?= View::e($flash['type']) ?>"><?= View::e($flash['message']) ?></div><?php endif; ?>
         <form method="post" action="<?= Http::url('/login') ?>" class="stack">
             <?= Csrf::field() ?>
-            <label>Correo electrónico<span class="field-shell"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#mail"></use></svg><input type="email" name="email" autocomplete="username" required autofocus></span></label>
+            <label>Correo o identificador<span class="field-shell"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#mail"></use></svg><input type="text" name="email" autocomplete="username" required autofocus></span></label>
             <label>Contraseña<span class="field-shell"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#key"></use></svg><input type="password" name="password" autocomplete="current-password" required></span></label>
             <label>Código 2FA <span class="optional">Sólo si está configurado</span><span class="field-shell"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#shield"></use></svg><input type="text" name="totp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code"></span></label>
             <button class="primary wide">Iniciar sesión</button>
-            <button class="passkey-button wide" type="button" disabled title="Configura una Passkey desde tu cuenta para utilizar esta opción"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#key"></use></svg>Usar Passkey</button>
+            <?php if ($webauthnEnabled): ?><button class="passkey-button wide" type="button" data-passkey-login data-identity-field="email" data-webauthn-endpoint="<?= View::e(Http::url('/')) ?>"><svg class="icon" aria-hidden="true"><use href="assets/icons.svg#key"></use></svg>Entrar con mi passkey</button><p class="passkey-status" data-passkey-status hidden aria-live="polite"></p><?php endif; ?>
         </form>
         <p class="login-help">El acceso está protegido con autenticación de dos factores.</p>
     </section>
 </main>
+<?php if ($webauthnEnabled): ?><script src="assets/passkeys.js?v=<?= (int) filemtime(dirname(__DIR__) . '/public/assets/passkeys.js') ?>" defer></script><?php endif; ?>
 </body></html>
 

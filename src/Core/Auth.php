@@ -37,12 +37,16 @@ final class Auth
     public static function login(array $user): void
     {
         session_regenerate_id(true);
+        $now = time();
         $_SESSION['auth'] = [
             'id' => (int) $user['id'],
             'client_id' => (int) $user['cliente'],
             'email' => (string) $user['email'],
             'name' => trim(implode(' ', array_filter([$user['nombre'] ?? '', $user['appat'] ?? '', $user['apmat'] ?? '']))),
             'type' => (string) ($user['tipo'] ?? ''),
+            'method' => (string) ($user['_auth_method'] ?? 'password'),
+            'authenticated_at' => $now,
+            'last_activity' => $now,
         ];
         $_SESSION['_csrf'] = bin2hex(random_bytes(32));
     }

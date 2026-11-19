@@ -20,7 +20,7 @@ final class BankingRepository
     /** @return array<string, mixed>|false */
     public function userByEmail(string $email): array|false
     {
-        $statement = $this->pdo->prepare('SELECT id, nombre, appat, apmat, email, password, tipo, cliente, `2fa` FROM usuarios WHERE email = :email LIMIT 1');
+        $statement = $this->pdo->prepare('SELECT id, nombre, appat, apmat, email, password, usuario, tipo, cliente, `2fa` FROM usuarios WHERE email = :email LIMIT 1');
         $statement->execute(['email' => $email]);
         return $statement->fetch();
     }
@@ -28,8 +28,16 @@ final class BankingRepository
     /** @return array<string, mixed>|false */
     public function userById(int $id): array|false
     {
-        $statement = $this->pdo->prepare('SELECT id, nombre, appat, apmat, email, password, tipo, cliente, `2fa` FROM usuarios WHERE id = :id LIMIT 1');
+        $statement = $this->pdo->prepare('SELECT id, nombre, appat, apmat, email, password, usuario, tipo, cliente, `2fa` FROM usuarios WHERE id = :id LIMIT 1');
         $statement->execute(['id' => $id]);
+        return $statement->fetch();
+    }
+
+    /** @return array<string, mixed>|false */
+    public function userByIdentifier(string $identifier): array|false
+    {
+        $statement = $this->pdo->prepare('SELECT id, nombre, appat, apmat, email, password, usuario, tipo, cliente, `2fa` FROM usuarios WHERE email = :email OR usuario = :username ORDER BY CASE WHEN email = :exact_email THEN 0 ELSE 1 END, id LIMIT 1');
+        $statement->execute(['email' => $identifier, 'username' => $identifier, 'exact_email' => $identifier]);
         return $statement->fetch();
     }
 

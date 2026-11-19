@@ -10,6 +10,7 @@ use Banca\Core\Http;
 use Banca\Core\Validation;
 use Banca\Core\View;
 use Banca\Repository\BankingRepository;
+use Banca\Repository\PasskeyRepository;
 use Banca\Service\AuthService;
 use Banca\Service\BankResolver;
 use Banca\Service\BatchTemplateService;
@@ -18,13 +19,16 @@ use Banca\Service\TotpService;
 use Banca\Service\TransferService;
 use Banca\Service\WithdrawalService;
 use Banca\Service\WithdrawalConcept;
+use Banca\Service\WebAuthnConfig;
+use Banca\Service\WebAuthnController;
+use Banca\Service\WebAuthnService;
 
 require dirname(__DIR__) . '/src/bootstrap.php';
 
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: strict-origin-when-cross-origin');
-header("Permissions-Policy: camera=(), microphone=(), geolocation=()");
+header("Permissions-Policy: camera=(), microphone=(), geolocation=(), publickey-credentials-get=(self), publickey-credentials-create=(self)");
 header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
 
 $route = Http::route();
@@ -40,6 +44,14 @@ if ($route === '/health' && $method === 'GET') {
 }
 
 $repository = BankingRepository::make();
+$webauthnConfig = WebAuthnConfig::load();
+$passkeys = new PasskeyRepository(Database::connection());
+$webauthn = new WebAuthnService($webauthnConfig, $passkeys);
+
+if (isset($_GET['webauthn'])) {
+    (new WebAuthnController(Database::connection(), $webauthnConfig, $repository, $passkeys, $webauthn))
+        ->handle((string) $_GET['webauthn']);
+}
 
 /** @param callable():void $callback */
 function postAction(callable $callback, string $success, string $failureRoute): never
@@ -58,7 +70,7 @@ if ($route === '/login' && $method === 'GET') {
     if (Auth::check()) {
         Http::redirect('/');
     }
-    View::render('login', ['title' => 'Acceso seguro'], false);
+    View::render('login', ['title' => 'Acceso seguro', 'webauthnEnabled' => $webauthn->isEnabled()], false);
     exit;
 }
 
@@ -256,6 +268,8 @@ if ($route === '/security' && $method === 'GET') {
     View::render('security', [
         'title' => 'Seguridad', 'balance' => $balance, 'hasTotp' => $current !== false && trim((string) $current['2fa']) !== '',
         'pendingSecret' => $secret, 'pendingUri' => $secret ? (new TotpService())->uri((string) $secret, (string) ($current['email'] ?? '')) : null,
+        'webauthnEnabled' => $webauthn->isEnabled(),
+        'passkeys' => $webauthn->isEnabled() ? $passkeys->publicCredentialsForUser(Auth::id()) : [],
     ]);
     exit;
 }

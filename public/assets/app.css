@@ -229,6 +229,19 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .login-card .alert.error { color: #ffc4c8; background: #3a181b; border-color: #742a30; }
 .login-help { margin: 22px auto 0; color: #827973; font-size: 11px; text-align: center; }
 
+/* Passkeys */
+.passkey-status { margin: 10px 0 0; color: var(--success); font-size: 12px; font-weight: 700; }
+.passkey-status.is-error { color: var(--danger); }
+.login-card .passkey-status { color: #9fdbad; text-align: center; }
+.login-card .passkey-status.is-error { color: #ffc4c8; }
+.passkey-manager { max-width: 1500px; margin-top: 20px; }
+.passkey-list { display: grid; gap: 12px; }
+.passkey-card { display: grid; grid-template-columns: 46px minmax(0,1fr) auto; align-items: center; gap: 14px; padding: 16px; background: var(--surface-warm); border: 1px solid var(--border); border-radius: 15px; }
+.passkey-icon { display: grid; place-items: center; width: 44px; height: 44px; color: var(--orange-deep); background: var(--orange-soft); border-radius: 13px; }
+.passkey-copy strong, .passkey-copy span { display: block; }
+.passkey-copy span { margin-top: 3px; color: var(--text-muted); font-size: 12px; }
+.passkey-actions { display: flex; gap: 8px; }
+
 @media (max-width: 1120px) {
   :root { --sidebar-width: 244px; }
   .sidebar { padding-right: 14px; padding-left: 14px; }
@@ -402,6 +415,11 @@ button:disabled { cursor: not-allowed; opacity: .55; }
   .login-shell { min-height: 100dvh; padding: calc(20px + env(safe-area-inset-top)) 14px calc(20px + env(safe-area-inset-bottom)); }
   .login-card { width: 100%; max-width: 420px; margin: auto; padding: 28px 22px; border-radius: 26px; }
   .login-logo { width: 104px; height: 104px; margin-bottom: 20px; }
+  .passkey-manager .panel-head { flex-direction: column; }
+  .passkey-manager .panel-head .primary { width: 100%; }
+  .passkey-card { grid-template-columns: 42px minmax(0,1fr); }
+  .passkey-actions { grid-column: 1 / -1; flex-direction: column; }
+  .passkey-actions .secondary { width: 100%; }
 
   body.app-body:not(.app-ready) .shell > * { opacity: 0; transform: translateY(10px) scale(.995); }
   body.app-body.app-ready .shell > * { animation: mobile-screen-in 430ms cubic-bezier(.22,1,.36,1) both; }
