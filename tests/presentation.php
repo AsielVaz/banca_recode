@@ -19,4 +19,9 @@ foreach ($cases as $input => $expected) {
     }
 }
 
-echo "Presentación correcta: fechas en español sin modificar los valores almacenados.\n";
+$withdrawView = file_get_contents(dirname(__DIR__) . '/views/withdraw.php') ?: '';
+if (preg_match('/<input(?=[^>]*name="concept")(?![^>]*\srequired(?:\s|>|=))[^>]*>/i', $withdrawView) !== 1) {
+    throw new RuntimeException('El concepto del retiro continúa siendo obligatorio en el navegador.');
+}
+
+echo "Presentación correcta: fechas en español y concepto SPEI opcional.\n";
