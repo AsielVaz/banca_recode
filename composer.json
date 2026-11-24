@@ -1,6 +1,6 @@
 {
   "name": "sistema14/banca-recode",
-  "description": "Reimplementación de Banca 14 para PHP 8.5",
+  "description": "Reimplementación de Banca 14 para PHP 8.3 o posterior",
   "type": "project",
   "license": "proprietary",
   "require": {
@@ -27,7 +27,8 @@
       "php tests/legacy_cep_pdf.php",
       "php tests/presentation.php",
       "php tests/webauthn.php",
-      "php tests/movement_recording.php"
+      "php tests/movement_recording.php",
+      "php tests/security.php"
     ],
     "lint": "php tests/lint.php"
   }

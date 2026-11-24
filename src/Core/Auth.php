@@ -23,7 +23,25 @@ final class Auth
 
     public static function check(): bool
     {
-        return self::id() > 0 && self::clientId() > 0;
+        $user = self::user();
+        if (!is_array($user) || (int) ($user['id'] ?? 0) <= 0 || (int) ($user['client_id'] ?? 0) <= 0) {
+            return false;
+        }
+
+        $now = time();
+        $authenticatedAt = (int) ($user['authenticated_at'] ?? 0);
+        $lastActivity = (int) ($user['last_activity'] ?? 0);
+        $idleTimeout = max(300, (int) Env::get('SESSION_IDLE_TIMEOUT', '1800'));
+        $absoluteTimeout = max($idleTimeout, (int) Env::get('SESSION_ABSOLUTE_TIMEOUT', '7200'));
+        if ($authenticatedAt <= 0 || $lastActivity <= 0
+            || $now - $lastActivity > $idleTimeout
+            || $now - $authenticatedAt > $absoluteTimeout) {
+            self::logout();
+            return false;
+        }
+
+        $_SESSION['auth']['last_activity'] = $now;
+        return true;
     }
 
     public static function requireUser(): void
@@ -56,7 +74,14 @@ final class Auth
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+            setcookie(session_name(), '', [
+                'expires' => time() - 42000,
+                'path' => $params['path'],
+                'domain' => $params['domain'],
+                'secure' => $params['secure'],
+                'httponly' => $params['httponly'],
+                'samesite' => $params['samesite'] ?? 'Lax',
+            ]);
         }
         session_destroy();
     }

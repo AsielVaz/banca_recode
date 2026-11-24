@@ -38,8 +38,9 @@ final class OperationToken
             throw new RuntimeException('La autorización de la operación expiró. Actualiza la página antes de intentarlo de nuevo.');
         }
         $key = trim((string) Env::get('APP_KEY', ''));
-        if (strlen($key) < 32) {
-            throw new RuntimeException('APP_KEY debe contener al menos 32 caracteres antes de procesar retiros.');
+        $normalizedKey = mb_strtolower($key);
+        if (strlen($key) < 32 || preg_match('/change|replace|example|placeholder|changeme/', $normalizedKey) === 1) {
+            throw new RuntimeException('APP_KEY debe ser un secreto aleatorio de al menos 32 caracteres antes de procesar retiros.');
         }
         $digest = strtoupper(hash_hmac('sha256', $scope . '|' . $token . '|' . $sequence, $key));
         $source = (int) Env::get('WITHDRAWAL_SOURCE', '7');

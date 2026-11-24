@@ -41,10 +41,21 @@ final class BankingRepository
         return $statement->fetch();
     }
 
-    public function failedLogins(string $email): int
+    public function failedLogins(string $email, string $ip): int
     {
-        $statement = $this->pdo->prepare("SELECT COUNT(*) FROM logsesiones WHERE usuario = :email AND tipo <> 'Correcto' AND TIMESTAMP(fecha, hora_i) >= DATE_SUB(NOW(), INTERVAL 1 HOUR)");
-        $statement->execute(['email' => $email]);
+        $statement = $this->pdo->prepare("SELECT GREATEST(
+            SUM(CASE WHEN usuario = :email_match THEN 1 ELSE 0 END),
+            SUM(CASE WHEN ip = :ip_match THEN 1 ELSE 0 END)
+        ) FROM logsesiones
+        WHERE tipo = 'Error'
+          AND TIMESTAMP(fecha, hora_i) >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
+          AND (usuario = :email_filter OR ip = :ip_filter)");
+        $statement->execute([
+            'email_match' => $email,
+            'ip_match' => $ip,
+            'email_filter' => $email,
+            'ip_filter' => $ip,
+        ]);
         return (int) $statement->fetchColumn();
     }
 

@@ -12,6 +12,7 @@ final class TransferService
 {
     public function execute(int $originClient, int $destinationClient, int $userId, float $amount, string $detail): void
     {
+        $detail = self::normalizeConcept($detail);
         if ($originClient === $destinationClient) {
             throw new InvalidArgumentException('La cartera de destino debe ser diferente a la de origen.');
         }
@@ -65,6 +66,12 @@ final class TransferService
             $notify->execute(['client' => $originClient]);
             $notify->execute(['client' => $destinationClient]);
         });
+    }
+
+    public static function normalizeConcept(mixed $concept): string
+    {
+        $concept = trim(is_string($concept) ? $concept : '');
+        return $concept === '' ? 'Deposito' : $concept;
     }
 }
 

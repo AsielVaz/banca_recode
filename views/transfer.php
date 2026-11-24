@@ -7,7 +7,7 @@
 <?= Csrf::field() ?>
 <label>Cartera destino<select name="destination" required><option value="">Selecciona una cartera del grupo</option><?php foreach ($clients as $client): ?><option value="<?= (int) $client['id'] ?>"><?= View::e($client['nombre']) ?></option><?php endforeach; ?></select></label>
 <label>Monto MXN<input name="amount" inputmode="decimal" placeholder="0.00" autocomplete="off" data-money-input required></label>
-<label>Detalle<textarea name="detail" maxlength="500" rows="3" placeholder="Motivo del traspaso"></textarea></label>
+<label>Concepto <span class="optional">Opcional</span><textarea name="detail" maxlength="500" rows="3" placeholder="Si lo dejas vacío se registrará como Deposito"></textarea></label>
 <div class="summary-line"><span>Disponible</span><strong>$<?= number_format((float) $balance, 2) ?></strong></div>
 <button class="primary wide">Confirmar traspaso</button>
 </form></section>

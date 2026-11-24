@@ -17,12 +17,15 @@ final class AuthService
 
     public function attempt(string $email, string $password, string $code): void
     {
-        $email = mb_strtolower(trim($email));
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
-            throw new RuntimeException('Correo o contraseña incorrectos.');
-        }
-        if ($this->repository->failedLogins($email) >= 6) {
+        $email = mb_substr(mb_strtolower(trim($email)), 0, 254);
+        $ip = mb_substr((string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0'), 0, 100);
+        $identity = $email !== '' ? $email : '*';
+        if ($this->repository->failedLogins($identity, $ip) >= 6) {
             throw new RuntimeException('Acceso bloqueado temporalmente por demasiados intentos. Inténtalo en una hora.');
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
+            $this->repository->logLogin($identity, false);
+            throw new RuntimeException('Correo o contraseña incorrectos.');
         }
         $user = $this->repository->userByEmail($email);
         $validPassword = $user !== false && $this->verifyPassword($password, (string) $user['password'], $email);

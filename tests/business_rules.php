@@ -19,6 +19,9 @@ $assert(WithdrawalConcept::normalize('874503') === '874503', 'Una referencia num
 $assert(WithdrawalConcept::normalize(' 00124 ') === '00124', 'La referencia numérica no fue normalizada correctamente.');
 $assert(WithdrawalConcept::normalize('Pago 874503') === 'Deposito', 'Un concepto alfanumérico no se reemplazó por Deposito.');
 $assert(WithdrawalConcept::normalize('') === 'Deposito', 'El concepto vacío no se reemplazó por Deposito.');
+$assert(TransferService::normalizeConcept('') === 'Deposito', 'El concepto vacío del traspaso no se reemplazó por Deposito.');
+$assert(TransferService::normalizeConcept('   ') === 'Deposito', 'El concepto con espacios del traspaso no se reemplazó por Deposito.');
+$assert(TransferService::normalizeConcept(' Pago interno ') === 'Pago interno', 'El concepto capturado del traspaso no se conservó.');
 $assert(Validation::money('1,234,567.89') === 1234567.89, 'El servidor no acepta correctamente un monto visual separado por comas.');
 
 $pdo = Database::connection();
@@ -59,4 +62,4 @@ try {
     }
 }
 
-echo "Reglas de negocio correctas: traspasos por líder dentro del grupo y conceptos de retiro normalizados.\n";
+echo "Reglas de negocio correctas: traspasos por líder dentro del grupo y conceptos normalizados.\n";

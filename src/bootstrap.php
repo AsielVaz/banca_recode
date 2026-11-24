@@ -40,12 +40,13 @@ if (!in_array($sameSite, ['Lax', 'Strict', 'None'], true)) {
     $sameSite = 'Lax';
 }
 $cookie = [
-    'lifetime' => 0,
+    'lifetime' => max(300, (int) Env::get('SESSION_ABSOLUTE_TIMEOUT', '7200')),
     'path' => '/',
     'secure' => Env::bool('SESSION_SECURE_COOKIE', Env::bool('SESSION_SECURE')),
     'httponly' => Env::bool('SESSION_COOKIE_HTTPONLY', true),
     'samesite' => $sameSite,
 ];
+ini_set('session.gc_maxlifetime', (string) $cookie['lifetime']);
 $cookieDomain = trim((string) Env::get('SESSION_COOKIE_DOMAIN', ''));
 if ($cookieDomain !== '') {
     $cookie['domain'] = $cookieDomain;
